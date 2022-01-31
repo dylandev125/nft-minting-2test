@@ -82,7 +82,6 @@ function App() {
         else if (currentMintStep === 2) {
           let nftTxn = await nftContract.publicMint({ value: ethers.utils.parseEther("0.01") });
           console.log("Mining... please wait");
-          console.log('')
           await nftTxn.wait();
         }
       } else {
