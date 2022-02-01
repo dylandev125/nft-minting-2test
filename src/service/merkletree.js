@@ -26,7 +26,6 @@ const verifyWhitelist = async (address) => {
       })
 
     let whiteListArray = JSON.parse(rawdata) || [];
-    console.log('whitelistarray: ',whiteListArray);
 
     const leaves = whiteListArray.map(v => keccak256(v));
     const tree = new MerkleTree(leaves, keccak256, { sort: true });
@@ -34,11 +33,11 @@ const verifyWhitelist = async (address) => {
     const leaf = keccak256(address);
     const proof = tree.getHexProof(leaf);
     const verified = tree.verify(proof, leaf, root);
-    // console.log('root: ', root);
+
     // console.log('leaf: ', leaf);
     // console.log('proof: ', proof);
     // console.log('verified: ', verified);
-    return {proof, leaf, verified};
+    return {root, proof, leaf, verified};
 }
 
 export default verifyWhitelist;

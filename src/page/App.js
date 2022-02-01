@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import '../service/merkletree'
 import verifyWhitelist from '../service/merkletree';
 const { ethereum } = window;
-const contractAddress = "0x02389e2a13f82cFfa65f942FD1b459B264Ac34e2";
+const contractAddress = "0xBf80418A2D7d8b730EF1D0F134ACc01275B9847E";
 const abi = contract.abi;
 const provider = new ethers.providers.Web3Provider(ethereum);
 const signer = provider.getSigner();
@@ -24,7 +24,7 @@ function App() {
   }
   const connectWalletHandler = async () => {
     const { ethereum } = window;
-    if(currentAccount) {
+    if (currentAccount) {
       setCurrentAccount(null);
       return
     }
@@ -34,23 +34,26 @@ function App() {
     try {
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       console.log("Found an account! Address: ", accounts[0]);
-      console.log(window.ethereum.chainId)
-      if(window.ethereum.chainId === '0xa869') {
+
+      if (window.ethereum.chainId === '0xa869') {
         setCurrentAccount(accounts[0]);
         let mintStep = await nftContract.getMintStep();
         setMintStep(mintStep)
+
+        let result = await verifyWhitelist("0x8d58995C2EB561Ca21c9bD7935015d739a75c5C0")
+        console.log(result.root)
       }
       else {
         console.log('worng chain id')
       }
       window.ethereum.on('accountsChanged', function (accounts) {
-        if(currentAccount) setCurrentAccount("");
+        if (currentAccount) setCurrentAccount("");
         else {
           setCurrentAccount(accounts[0]);
         }
       });
       window.ethereum.on('chainchanged', function () {
-        if(window.ethereum.chainId !== '0xa869') {
+        if (window.ethereum.chainId !== '0xa869') {
           console.log("Please make sure you are on Fuji", window.ethereum.chainId)
         }
       });
@@ -62,20 +65,22 @@ function App() {
     try {
       const { ethereum } = window;
       if (ethereum) {
-        if(!currentAccount) {
+        if (!currentAccount) {
           console.log('Please connect wallet')
           return
         }
         const result = await verifyWhitelist(currentAccount);
         const proof = result.proof;
         const verified = result.verified
-        if(!currentMintStep) return
-        if(currentMintStep === 1) {
-          if(!verified) {
+        if (!currentMintStep) return
+        console.log(currentMintStep)
+        if (currentMintStep === 1) {
+          console.log(proof)
+          if (!verified) {
             console.log("You are not a whitelist member")
             return
           }
-          let nftTxn = await nftContract.presaleMint({ value: ethers.utils.parseEther("0.01") }, proof);
+          let nftTxn = await nftContract.presaleMint(proof, { value: ethers.utils.parseEther("0.01") });
           console.log("Mining... please wait");
           await nftTxn.wait();
         }
@@ -91,7 +96,7 @@ function App() {
       console.log(err);
     }
   }
-  useEffect( () => {
+  useEffect(() => {
     checkWalletIsConnected();
   }, [])
   return (
