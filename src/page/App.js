@@ -1,15 +1,22 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import contract from '../contracts/NFTCollectible.json';
+import passAbi from '../contracts/pass.json'
 import { ethers } from 'ethers';
 import '../service/merkletree'
 import verifyWhitelist from '../service/merkletree';
+import Pass from '../component/pass'
+
 const { ethereum } = window;
 const contractAddress = "0xBf80418A2D7d8b730EF1D0F134ACc01275B9847E";
+const passAddress = "0xB185411605cBF9FEE84B88eed133c4de0125633D";
 const abi = contract.abi;
+const pass = passAbi.abi;
 const provider = new ethers.providers.Web3Provider(ethereum);
 const signer = provider.getSigner();
 const nftContract = new ethers.Contract(contractAddress, abi, signer);
+const passContract = new ethers.Contract(passAddress, pass, signer)
+
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [currentMintStep, setMintStep] = useState(null)
@@ -19,7 +26,7 @@ function App() {
       console.log("Make sure you have Metamask installed!");
       return;
     } else {
-      console.log("Wallet exists! We're ready to go!")
+      // console.log("Wallet exists! We're ready to go!")
     }
   }
   const connectWalletHandler = async () => {
@@ -41,17 +48,12 @@ function App() {
         setMintStep(mintStep)
 
         let result = await verifyWhitelist("0x8d58995C2EB561Ca21c9bD7935015d739a75c5C0")
-        console.log(result.root)
+        //console.log(result.root)
       }
       else {
         console.log('worng chain id')
       }
-      window.ethereum.on('accountsChanged', function (accounts) {
-        if (currentAccount) setCurrentAccount("");
-        else {
-          setCurrentAccount(accounts[0]);
-        }
-      });
+
       window.ethereum.on('chainchanged', function () {
         if (window.ethereum.chainId !== '0xa869') {
           console.log("Please make sure you are on Fuji", window.ethereum.chainId)
@@ -61,6 +63,27 @@ function App() {
       console.log(err)
     }
   }
+
+  const passMint = async (realm) => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        if (!currentAccount) {
+          console.log('Please connect wallet')
+          return
+        }
+
+        let nftTxn = await passContract.passMint(realm, { value: ethers.utils.parseEther("0.01") });
+        await nftTxn.wait();
+
+      } else {
+        console.log("Ethereum object does not exist");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const mintNftHandler = async () => {
     try {
       const { ethereum } = window;
@@ -81,12 +104,10 @@ function App() {
             return
           }
           let nftTxn = await nftContract.presaleMint(proof, { value: ethers.utils.parseEther("0.01") });
-          console.log("Mining... please wait");
           await nftTxn.wait();
         }
         else if (currentMintStep === 2) {
           let nftTxn = await nftContract.publicMint({ value: ethers.utils.parseEther("0.01") });
-          console.log("Mining... please wait");
           await nftTxn.wait();
         }
       } else {
@@ -97,11 +118,24 @@ function App() {
     }
   }
   useEffect(() => {
+    window.ethereum.on('accountsChanged', function (accounts) {
+      if (currentAccount) setCurrentAccount("");
+      else {
+        setCurrentAccount(accounts[0]);
+      }
+    });
     checkWalletIsConnected();
   }, [])
   return (
     <div className='main-app'>
-      <h1>Mint Test</h1>
+      <div className='pass-container'>
+        <Pass onClick={() => passMint(1)}>Quantum</Pass>
+        <Pass onClick={() => passMint(2)}>Radioactive</Pass>
+        <Pass onClick={() => passMint(3)}>Mecha</Pass>
+        <Pass onClick={() => passMint(4)}>Digi</Pass>
+        <Pass onClick={() => passMint(5)}>Cosmic</Pass>
+      </div>
+
       <div className='btnGroup'>
         <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
           {currentAccount ? 'Disconnect  Wallet' : 'Connect Wallet'}

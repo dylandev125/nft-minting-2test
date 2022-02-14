@@ -4,6 +4,7 @@
 }
 
 .btnGroup {
+    margin-top: 100px;
     display: flex;
     justify-content: space-around;
 }
@@ -24,4 +25,9 @@
 
 .mint-nft-button {
     background: orange;
+}
+
+.pass-container {
+    display: flex;
+    justify-content: space-between;
 }

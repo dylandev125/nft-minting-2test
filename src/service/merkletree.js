@@ -16,8 +16,8 @@ const verifyWhitelist = async (address) => {
         console.log('Address INVALID');
         return false;
     }
-    console.log('address: ', address);
-    console.log('This is a valid address');
+    // console.log('address: ', address);
+    // console.log('This is a valid address');
 
     await fetch(`./whitelist/whitelist_0.json`)
       .then((response) => response.text())
