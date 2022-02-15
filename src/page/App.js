@@ -8,7 +8,7 @@ import verifyWhitelist from '../service/merkletree';
 import Pass from '../component/pass'
 
 const { ethereum } = window;
-const contractAddress = "0xBf80418A2D7d8b730EF1D0F134ACc01275B9847E";
+const contractAddress = "0xf7ED535C63b197Bda08ef4713D7fcdeBc447b9f0";
 const passAddress = "0xB185411605cBF9FEE84B88eed133c4de0125633D";
 const abi = contract.abi;
 const pass = passAbi.abi;

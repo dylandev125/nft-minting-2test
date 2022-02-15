@@ -222,12 +222,12 @@
 					"type": "address"
 				}
 			],
-			"name": "getTokenId",
+			"name": "getTokenList",
 			"outputs": [
 				{
-					"internalType": "uint256",
+					"internalType": "uint256[]",
 					"name": "",
-					"type": "uint256"
+					"type": "uint256[]"
 				}
 			],
 			"stateMutability": "view",
@@ -313,9 +313,9 @@
 			"name": "presaleMint",
 			"outputs": [
 				{
-					"internalType": "uint256",
+					"internalType": "uint256[]",
 					"name": "",
-					"type": "uint256"
+					"type": "uint256[]"
 				}
 			],
 			"stateMutability": "payable",
@@ -326,9 +326,9 @@
 			"name": "publicMint",
 			"outputs": [
 				{
-					"internalType": "uint256",
+					"internalType": "uint256[]",
 					"name": "",
-					"type": "uint256"
+					"type": "uint256[]"
 				}
 			],
 			"stateMutability": "payable",
@@ -445,6 +445,19 @@
 					"type": "uint8"
 				}
 			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_add",
+					"type": "address"
+				}
+			],
+			"name": "setPassAddress",
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
